@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>مشروع المشرقية - لوحة التحكم الشاملة</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- مكتبة قراءة ملفات KML/KMZ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-omnivore/0.3.4/leaflet-omnivore.min.js"></script>
+</head>
+<body>
+    <div id="map" style="height: 100vh; width: 100%;"></div>
+
+    <script>
+        var map = L.map('map').setView([24.8322, 46.9035], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        // تحميل ملف الـ KMZ مباشرة (تأكد من تسمية الملف Project.kmz ووضعه في نفس المجلد)
+        var runLayer = omnivore.kml('Project.kmz')
+            .on('ready', function() {
+                map.fitBounds(runLayer.getBounds()); // توجيه الخريطة آلياً لمكان المشروع
+                
+                runLayer.eachLayer(function(layer) {
+                    // إظهار أسماء الطرق والشبكات عند الضغط عليها
+                    if (layer.feature && layer.feature.properties) {
+                        layer.bindPopup("اسم العنصر: " + layer.feature.properties.name);
+                    }
+                });
+            })
+            .addTo(map);
+    </script>
+</body>
+</html>
